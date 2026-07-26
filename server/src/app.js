@@ -1,37 +1,42 @@
 import express from "express";
-import cors from "cors";
-import helmet from "helmet";
-import morgan from "morgan";
+import routes from "./routes/index.js";
+
+import notFound from "./middleware/notFound.middleware.js";
+import errorHandler from "./middleware/error.middleware.js";
 
 const app = express();
 
 /*
-|--------------------------------------------------------------------------
-| Global Middleware
-|--------------------------------------------------------------------------
+=========================
+Built-in Middlewares
+=========================
 */
-
-app.use(cors());
-
-app.use(helmet());
 
 app.use(express.json());
-
 app.use(express.urlencoded({ extended: true }));
 
-app.use(morgan("dev"));
-
 /*
-|--------------------------------------------------------------------------
-| Health Check Route
-|--------------------------------------------------------------------------
+=========================
+API Routes
+=========================
 */
 
-app.get("/api/health", (req, res) => {
-    res.status(200).json({
-        success: true,
-        message: "SupplyMind AI Backend is running 🚀",
-    });
-});
+app.use("/api", routes);
+
+/*
+=========================
+404 Middleware
+=========================
+*/
+
+app.use(notFound);
+
+/*
+=========================
+Global Error Middleware
+=========================
+*/
+
+app.use(errorHandler);
 
 export default app;

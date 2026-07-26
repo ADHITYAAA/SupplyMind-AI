@@ -1,0 +1,39 @@
+import express from "express";
+import ApiResponse from "../common/responses/ApiResponse.js";
+
+import userRoutes from "../modules/users/user.routes.js";
+
+const router = express.Router();
+
+/*
+=========================================
+Health Check
+=========================================
+*/
+
+router.get("/", (req, res) => {
+
+    return res.status(200).json(
+
+        new ApiResponse(
+            200,
+            "SupplyMind AI Backend is running successfully 🚀",
+            {
+                version: "1.0.0",
+                status: "Healthy"
+            }
+        )
+
+    );
+
+});
+
+/*
+=========================================
+Application Routes
+=========================================
+*/
+
+router.use("/users", userRoutes);
+
+export default router;
