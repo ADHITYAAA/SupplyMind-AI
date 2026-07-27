@@ -8,22 +8,54 @@ import {
     deleteUser
 } from "./user.controller.js";
 
+import authMiddleware from "../auth/auth.middleware.js";
+import roleMiddleware from "../auth/role.middleware.js";
+
 const router = express.Router();
 
 /*
 =========================================
-User Routes
+Public Routes
 =========================================
 */
 
+// Register New User
 router.post("/", createUser);
 
-router.get("/", getAllUsers);
+/*
+=========================================
+Protected Routes
+=========================================
+*/
 
-router.get("/:id", getUserById);
+// Get All Users (Admin Only)
+router.get(
+    "/",
+    authMiddleware,
+    roleMiddleware("Admin"),
+    getAllUsers
+);
 
-router.put("/:id", updateUser);
+// Get User By ID (Authenticated Users)
+router.get(
+    "/:id",
+    authMiddleware,
+    getUserById
+);
 
-router.delete("/:id", deleteUser);
+// Update User (Authenticated Users)
+router.put(
+    "/:id",
+    authMiddleware,
+    updateUser
+);
+
+// Delete User (Admin Only)
+router.delete(
+    "/:id",
+    authMiddleware,
+    roleMiddleware("Admin"),
+    deleteUser
+);
 
 export default router;

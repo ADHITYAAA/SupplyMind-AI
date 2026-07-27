@@ -2,6 +2,7 @@ import express from "express";
 import ApiResponse from "../common/responses/ApiResponse.js";
 
 import userRoutes from "../modules/users/user.routes.js";
+import authRoutes from "../modules/auth/auth.routes.js";
 
 const router = express.Router();
 
@@ -35,5 +36,7 @@ Application Routes
 */
 
 router.use("/users", userRoutes);
+
+router.use("/auth", authRoutes);
 
 export default router;
