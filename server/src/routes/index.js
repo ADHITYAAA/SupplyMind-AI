@@ -4,6 +4,8 @@ import ApiResponse from "../common/responses/ApiResponse.js";
 import userRoutes from "../modules/users/user.routes.js";
 import authRoutes from "../modules/auth/auth.routes.js";
 import supplierRoutes from "../modules/suppliers/supplier.routes.js";
+import productRoutes from "../modules/products/product.routes.js";
+import warehouseRoutes from "../modules/warehouses/warehouse.routes.js";
 
 const router = express.Router();
 
@@ -41,5 +43,9 @@ router.use("/users", userRoutes);
 router.use("/auth", authRoutes);
 
 router.use("/suppliers", supplierRoutes);
+
+router.use("/products", productRoutes);
+
+router.use("/warehouses", warehouseRoutes);
 
 export default router;
