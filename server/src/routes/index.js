@@ -8,6 +8,7 @@ import productRoutes from "../modules/products/product.routes.js";
 import warehouseRoutes from "../modules/warehouses/warehouse.routes.js";
 import inventoryRoutes from "../modules/inventories/inventory.routes.js";
 import shipmentRoutes from "../modules/shipments/shipment.routes.js";
+import purchaseOrderRoutes from "../modules/purchase-orders/purchase-order.routes.js";
 
 const router = express.Router();
 
@@ -53,5 +54,7 @@ router.use("/warehouses", warehouseRoutes);
 router.use("/inventories", inventoryRoutes);
 
 router.use("/shipments", shipmentRoutes);
+
+router.use("/purchase-orders", purchaseOrderRoutes);
 
 export default router;
