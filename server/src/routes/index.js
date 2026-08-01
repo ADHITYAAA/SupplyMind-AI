@@ -6,6 +6,7 @@ import authRoutes from "../modules/auth/auth.routes.js";
 import supplierRoutes from "../modules/suppliers/supplier.routes.js";
 import productRoutes from "../modules/products/product.routes.js";
 import warehouseRoutes from "../modules/warehouses/warehouse.routes.js";
+import inventoryRoutes from "../modules/inventories/inventory.routes.js";
 
 const router = express.Router();
 
@@ -47,5 +48,7 @@ router.use("/suppliers", supplierRoutes);
 router.use("/products", productRoutes);
 
 router.use("/warehouses", warehouseRoutes);
+
+router.use("/inventories", inventoryRoutes);
 
 export default router;
