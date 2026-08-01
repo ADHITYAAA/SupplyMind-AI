@@ -9,6 +9,8 @@ import warehouseRoutes from "../modules/warehouses/warehouse.routes.js";
 import inventoryRoutes from "../modules/inventories/inventory.routes.js";
 import shipmentRoutes from "../modules/shipments/shipment.routes.js";
 import purchaseOrderRoutes from "../modules/purchase-orders/purchase-order.routes.js";
+import zoneRoutes from "../modules/warehouse-zones/zone.routes.js";
+import rackRoutes from "../modules/warehouse-racks/rack.routes.js";
 
 const router = express.Router();
 
@@ -56,5 +58,9 @@ router.use("/inventories", inventoryRoutes);
 router.use("/shipments", shipmentRoutes);
 
 router.use("/purchase-orders", purchaseOrderRoutes);
+
+router.use("/warehouse-zones", zoneRoutes);
+
+router.use("/warehouse-racks", rackRoutes);
 
 export default router;
