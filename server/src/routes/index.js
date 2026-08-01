@@ -11,6 +11,8 @@ import shipmentRoutes from "../modules/shipments/shipment.routes.js";
 import purchaseOrderRoutes from "../modules/purchase-orders/purchase-order.routes.js";
 import zoneRoutes from "../modules/warehouse-zones/zone.routes.js";
 import rackRoutes from "../modules/warehouse-racks/rack.routes.js";
+import shelfRoutes from "../modules/warehouse-shelves/shelf.routes.js";
+import binRoutes from "../modules/warehouse-bins/bin.routes.js";
 
 const router = express.Router();
 
@@ -62,5 +64,9 @@ router.use("/purchase-orders", purchaseOrderRoutes);
 router.use("/warehouse-zones", zoneRoutes);
 
 router.use("/warehouse-racks", rackRoutes);
+
+router.use("/warehouse-shelves", shelfRoutes);
+
+router.use("/warehouse-bins", binRoutes);
 
 export default router;
