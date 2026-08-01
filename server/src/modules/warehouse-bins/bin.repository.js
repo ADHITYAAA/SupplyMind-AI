@@ -1,4 +1,8 @@
 import Bin from "./bin.model.js";
+import Shelf from "../warehouse-shelves/shelf.model.js";
+import Rack from "../warehouse-racks/rack.model.js";
+import Zone from "../warehouse-zones/zone.model.js";
+
 import buildPagination from "../../common/utils/pagination.js";
 
 class BinRepository {
@@ -39,6 +43,44 @@ class BinRepository {
 
     /*
     =====================================
+    Find Bin With Complete Hierarchy
+    =====================================
+    */
+
+    async findHierarchy(binId) {
+
+        const bin = await Bin.findById(binId);
+
+        if (!bin) {
+
+            return null;
+
+        }
+
+        const shelf = await Shelf.findById(bin.shelf);
+
+        const rack = await Rack.findById(shelf.rack);
+
+        const zone = await Zone.findById(rack.zone);
+
+        return {
+
+            bin,
+
+            shelf,
+
+            rack,
+
+            zone,
+
+            warehouse: zone.warehouse
+
+        };
+
+    }
+
+    /*
+    =====================================
     Find Bin By Shelf & Code
     =====================================
     */
@@ -70,23 +112,11 @@ class BinRepository {
 
         const query = {};
 
-        /*
-        =====================================
-        Shelf Filter
-        =====================================
-        */
-
         if (filters.shelf) {
 
             query.shelf = filters.shelf;
 
         }
-
-        /*
-        =====================================
-        Status Filter
-        =====================================
-        */
 
         if (filters.status) {
 
@@ -107,9 +137,7 @@ class BinRepository {
             )
 
             .sort({
-
                 createdAt: -1
-
             })
 
             .skip(skip)
@@ -123,13 +151,9 @@ class BinRepository {
             bins,
 
             pagination: buildPagination(
-
                 total,
-
                 page,
-
                 limit
-
             )
 
         };
@@ -184,9 +208,7 @@ class BinRepository {
     async delete(binId) {
 
         return await Bin.findByIdAndDelete(
-
             binId
-
         );
 
     }

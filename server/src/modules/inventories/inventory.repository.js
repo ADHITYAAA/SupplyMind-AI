@@ -36,6 +36,11 @@ class InventoryRepository {
             )
 
             .populate(
+                "bin",
+                "binName binCode status"
+            )
+
+            .populate(
                 "createdBy",
                 "fullName email"
             );
@@ -44,20 +49,27 @@ class InventoryRepository {
 
     /*
     =====================================
-    Find By Product & Warehouse
+    Find By Product + Warehouse + Bin
     =====================================
     */
 
-    async findByProductAndWarehouse(
+    async findByProductWarehouseAndBin(
+
         productId,
-        warehouseId
+
+        warehouseId,
+
+        binId = null
+
     ) {
 
         return await Inventory.findOne({
 
             product: productId,
 
-            warehouse: warehouseId
+            warehouse: warehouseId,
+
+            bin: binId
 
         });
 
@@ -101,6 +113,18 @@ class InventoryRepository {
 
         /*
         =====================================
+        Bin Filter
+        =====================================
+        */
+
+        if (filters.bin) {
+
+            query.bin = filters.bin;
+
+        }
+
+        /*
+        =====================================
         Stock Status Filter
         =====================================
         */
@@ -121,6 +145,11 @@ class InventoryRepository {
             .populate(
                 "warehouse",
                 "warehouseName warehouseCode"
+            )
+
+            .populate(
+                "bin",
+                "binName binCode status"
             )
 
             .populate(
@@ -165,8 +194,11 @@ class InventoryRepository {
     */
 
     async update(
+
         inventoryId,
+
         inventoryData
+
     ) {
 
         return await Inventory.findByIdAndUpdate(
@@ -196,6 +228,11 @@ class InventoryRepository {
             )
 
             .populate(
+                "bin",
+                "binName binCode status"
+            )
+
+            .populate(
                 "createdBy",
                 "fullName"
             );
@@ -208,12 +245,12 @@ class InventoryRepository {
     =====================================
     */
 
-    async delete(
-        inventoryId
-    ) {
+    async delete(inventoryId) {
 
         return await Inventory.findByIdAndDelete(
+
             inventoryId
+
         );
 
     }

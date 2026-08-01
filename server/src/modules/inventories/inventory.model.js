@@ -30,6 +30,18 @@ const inventorySchema = new mongoose.Schema(
 
         /*
         =====================================
+        Exact Storage Location
+        =====================================
+        */
+
+        bin: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Bin",
+            default: null
+        },
+
+        /*
+        =====================================
         Stock Information
         =====================================
         */
@@ -119,7 +131,7 @@ const inventorySchema = new mongoose.Schema(
 
 /*
 =====================================
-One Product Per Warehouse
+One Product Per Warehouse Per Bin
 =====================================
 */
 
@@ -129,7 +141,9 @@ inventorySchema.index(
 
         product: 1,
 
-        warehouse: 1
+        warehouse: 1,
+
+        bin: 1
 
     },
 

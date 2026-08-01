@@ -1,6 +1,8 @@
 import inventoryRepository from "./inventory.repository.js";
 import productRepository from "../products/product.repository.js";
 import warehouseRepository from "../warehouses/warehouse.repository.js";
+import binRepository from "../warehouse-bins/bin.repository.js";
+
 import ApiError from "../../common/errors/ApiError.js";
 import { HTTP_STATUS } from "../../common/constants/index.js";
 
@@ -54,24 +56,81 @@ class InventoryService {
 
         /*
         =====================================
+        Validate Bin (Optional)
+        =====================================
+        */
+
+        if (inventoryData.bin) {
+
+            const hierarchy = await binRepository.findHierarchy(
+
+                inventoryData.bin
+
+            );
+
+            if (!hierarchy) {
+
+                throw new ApiError(
+
+                    HTTP_STATUS.NOT_FOUND,
+
+                    "Bin not found."
+
+                );
+
+            }
+
+            /*
+            =====================================
+            Validate Bin Belongs To Warehouse
+            =====================================
+            */
+
+            if (
+
+                hierarchy.warehouse.toString() !==
+
+                inventoryData.warehouse
+
+            ) {
+
+                throw new ApiError(
+
+                    HTTP_STATUS.BAD_REQUEST,
+
+                    "Selected bin does not belong to the selected warehouse."
+
+                );
+
+            }
+
+        }
+
+        /*
+        =====================================
         Prevent Duplicate Inventory
         =====================================
         */
 
         const existingInventory =
-            await inventoryRepository.findByProductAndWarehouse(
+            await inventoryRepository.findByProductWarehouseAndBin(
 
                 inventoryData.product,
 
-                inventoryData.warehouse
+                inventoryData.warehouse,
+
+                inventoryData.bin || null
 
             );
 
         if (existingInventory) {
 
             throw new ApiError(
+
                 HTTP_STATUS.BAD_REQUEST,
-                "Inventory already exists for this product in this warehouse."
+
+                "Inventory already exists for this product at this location."
+
             );
 
         }
@@ -178,6 +237,8 @@ class InventoryService {
 
             warehouse: query.warehouse,
 
+            bin: query.bin,
+
             stockStatus: query.stockStatus
 
         };
@@ -208,94 +269,153 @@ class InventoryService {
 
     ) {
 
+        const existingInventory =
+            await inventoryRepository.findById(
+                inventoryId
+            );
+
+        if (!existingInventory) {
+
+            throw new ApiError(
+                HTTP_STATUS.NOT_FOUND,
+                "Inventory not found."
+            );
+
+        }
+
         /*
+        =====================================
+        Validate Bin (Optional)
+        =====================================
+        */
+
+        if (inventoryData.bin) {
+
+            const hierarchy = await binRepository.findHierarchy(
+
+                inventoryData.bin
+
+            );
+
+            if (!hierarchy) {
+
+                throw new ApiError(
+
+                    HTTP_STATUS.NOT_FOUND,
+
+                    "Bin not found."
+
+                );
+
+            }
+
+            const warehouseId =
+
+                inventoryData.warehouse ??
+
+                existingInventory.warehouse._id.toString();
+
+            if (
+
+                hierarchy.warehouse.toString() !==
+
+                warehouseId
+
+            ) {
+
+                throw new ApiError(
+
+                    HTTP_STATUS.BAD_REQUEST,
+
+                    "Selected bin does not belong to the selected warehouse."
+
+                );
+
+            }
+
+        }
+                /*
         =====================================
         Auto Calculate Available Stock
         =====================================
         */
 
-        if (
+        const currentStock =
 
-            inventoryData.currentStock !== undefined ||
+            inventoryData.currentStock ??
 
-            inventoryData.reservedStock !== undefined
+            existingInventory.currentStock;
 
-        ) {
+        const reservedStock =
 
-            const existingInventory =
-                await inventoryRepository.findById(
-                    inventoryId
-                );
+            inventoryData.reservedStock ??
 
-            if (!existingInventory) {
+            existingInventory.reservedStock;
 
-                throw new ApiError(
-                    HTTP_STATUS.NOT_FOUND,
-                    "Inventory not found."
-                );
+        inventoryData.availableStock =
 
-            }
+            currentStock -
 
-            const currentStock =
+            reservedStock;
 
-                inventoryData.currentStock ??
+        /*
+        =====================================
+        Auto Calculate Stock Status
+        =====================================
+        */
 
-                existingInventory.currentStock;
+        const reorderLevel =
 
-            const reservedStock =
+            inventoryData.reorderLevel ??
 
-                inventoryData.reservedStock ??
+            existingInventory.reorderLevel;
 
-                existingInventory.reservedStock;
+        if (currentStock <= 0) {
 
-            inventoryData.availableStock =
-
-                currentStock -
-
-                reservedStock;
-
-            const reorderLevel =
-
-                inventoryData.reorderLevel ??
-
-                existingInventory.reorderLevel;
-
-            if (currentStock <= 0) {
-
-                inventoryData.stockStatus = "Out Of Stock";
-
-            }
-
-            else if (currentStock <= reorderLevel) {
-
-                inventoryData.stockStatus = "Low Stock";
-
-            }
-
-            else {
-
-                inventoryData.stockStatus = "In Stock";
-
-            }
-
-            inventoryData.lastStockUpdate = new Date();
+            inventoryData.stockStatus = "Out Of Stock";
 
         }
 
-        const inventory =
-            await inventoryRepository.update(
+        else if (
 
-                inventoryId,
+            currentStock <= reorderLevel
 
-                inventoryData
+        ) {
 
-            );
+            inventoryData.stockStatus = "Low Stock";
+
+        }
+
+        else {
+
+            inventoryData.stockStatus = "In Stock";
+
+        }
+
+        /*
+        =====================================
+        Audit
+        =====================================
+        */
+
+        inventoryData.lastStockUpdate = new Date();
+
+        const inventory = await inventoryRepository.update(
+
+            inventoryId,
+
+            inventoryData
+
+        );
 
         if (!inventory) {
 
             throw new ApiError(
+
                 HTTP_STATUS.NOT_FOUND,
+
                 "Inventory not found."
+
             );
 
         }
@@ -320,8 +440,11 @@ class InventoryService {
         if (!inventory) {
 
             throw new ApiError(
+
                 HTTP_STATUS.NOT_FOUND,
+
                 "Inventory not found."
+
             );
 
         }
