@@ -1,5 +1,5 @@
 import fs from "fs";
-import pdf from "pdf-parse/lib/pdf-parse.js";
+import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 
 import { PARSER_TYPES } from "../constants.js";
 
@@ -15,17 +15,77 @@ class PDFParser {
 
         try {
 
-const buffer = fs.readFileSync(filePath);
+            /*
+            =====================================
+            Read PDF
+            =====================================
+            */
 
-const result = await pdf(buffer, {
+            const buffer = new Uint8Array(
 
-    max: 0
+                fs.readFileSync(filePath)
 
-});
+            );
 
-            const extractedText =
+            /*
+            =====================================
+            Load PDF
+            =====================================
+            */
 
-                result.text
+            const loadingTask = getDocument({
+
+                data: buffer
+
+            });
+
+            const pdf = await loadingTask.promise;
+
+            /*
+            =====================================
+            Extract Text From All Pages
+            =====================================
+            */
+
+            let extractedText = "";
+
+            for (
+
+                let pageNumber = 1;
+
+                pageNumber <= pdf.numPages;
+
+                pageNumber++
+
+            ) {
+
+                const page = await pdf.getPage(
+
+                    pageNumber
+
+                );
+
+                const textContent =
+
+                    await page.getTextContent();
+
+                const pageText =
+
+                    textContent.items
+
+                        .map(item => item.str)
+
+                        .join(" ");
+
+                extractedText +=
+
+                    pageText + " ";
+
+            }
+
+            extractedText =
+
+                extractedText
 
                     .replace(/\s+/g, " ")
 
@@ -35,13 +95,9 @@ const result = await pdf(buffer, {
 
                 success: true,
 
-                parser:
+                parser: PARSER_TYPES.PDF,
 
-                    PARSER_TYPES.PDF,
-
-                fileType:
-
-                    "application/pdf",
+                fileType: "application/pdf",
 
                 extractedText,
 
@@ -49,7 +105,7 @@ const result = await pdf(buffer, {
 
                     pageCount:
 
-                        result.numpages,
+                        pdf.numPages,
 
                     wordCount:
 
@@ -57,9 +113,9 @@ const result = await pdf(buffer, {
 
                             ? extractedText
 
-                                .split(/\s+/)
+                                  .split(/\s+/)
 
-                                .length
+                                  .length
 
                             : 0,
 
@@ -83,13 +139,9 @@ const result = await pdf(buffer, {
 
                 success: false,
 
-                parser:
+                parser: PARSER_TYPES.PDF,
 
-                    PARSER_TYPES.PDF,
-
-                error:
-
-                    error.message
+                error: error.message
 
             };
 

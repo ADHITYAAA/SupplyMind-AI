@@ -2,6 +2,7 @@ import path from "path";
 
 import documentRepository from "./document.repository.js";
 import documentProcessingService from "../document-processing/document-processing.service.js";
+import entityExtractionService from "../intelligence/entity-extraction/entity-extraction.service.js";
 
 import ApiError from "../../common/errors/ApiError.js";
 import { HTTP_STATUS } from "../../common/constants/index.js";
@@ -102,6 +103,34 @@ class DocumentService {
 
         /*
         =====================================
+        Extract Business Entities
+        =====================================
+        */
+
+        let extractedEntities = {};
+
+        if (
+
+            processingResult.success &&
+
+            processingResult.extractedText
+
+        ) {
+
+            extractedEntities =
+
+                await entityExtractionService.extract(
+
+                    document.documentType,
+
+                    processingResult.extractedText
+
+                );
+
+        }
+
+        /*
+        =====================================
         Save Processing Result
         =====================================
         */
@@ -119,6 +148,8 @@ class DocumentService {
                     extractedText:
 
                         processingResult.extractedText,
+
+                    extractedEntities,
 
                     parserUsed:
 

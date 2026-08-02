@@ -136,6 +136,26 @@ const documentSchema = new mongoose.Schema(
 
         },
 
+        /*
+        =====================================
+        Extracted Business Entities
+        =====================================
+        */
+
+        extractedEntities: {
+
+            type: mongoose.Schema.Types.Mixed,
+
+            default: {}
+
+        },
+
+        /*
+        =====================================
+        Parser Information
+        =====================================
+        */
+
         parserUsed: {
 
             type: String,
