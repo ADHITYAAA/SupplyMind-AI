@@ -20,10 +20,18 @@ class DocumentProcessingService {
 
             console.log("\n====================================");
             console.log("DOCUMENT PROCESSING STARTED");
-            console.log("File Name :", document.originalFileName);
-            console.log("MIME Type :", document.mimeType);
-            console.log("File Path :", document.storagePath);
-            console.log("====================================\n");
+            console.log("====================================");
+
+            console.log("Complete Document Object:");
+            console.log(document);
+
+            console.log("------------------------------------");
+            console.log("Original File :", document.originalFileName);
+            console.log("Stored File   :", document.storedFileName);
+            console.log("MIME Type     :", JSON.stringify(document.mimeType));
+            console.log("Extension     :", JSON.stringify(document.fileExtension));
+            console.log("Storage Path  :", document.storagePath);
+            console.log("------------------------------------");
 
             /*
             =====================================
@@ -33,7 +41,9 @@ class DocumentProcessingService {
 
             const parser = ParserFactory.getParser(
 
-                document.mimeType
+                document.mimeType,
+
+                document.fileExtension
 
             );
 

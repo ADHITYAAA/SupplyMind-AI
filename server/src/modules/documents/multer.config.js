@@ -98,25 +98,85 @@ const storage = multer.diskStorage({
 
 /*
 =====================================
-Allowed File Types
+Allowed MIME Types
 =====================================
 */
 
 const allowedMimeTypes = [
 
+    /*
+    PDF
+    */
+
     "application/pdf",
 
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    /*
+    Word
+    */
 
     "application/msword",
 
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+
+    /*
+    Excel
+    */
 
     "application/vnd.ms-excel",
+
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+
+    /*
+    CSV
+    */
+
+    "text/csv",
+
+    "application/csv",
+
+    /*
+    Text
+    */
+
+    "text/plain",
+
+    /*
+    Images
+    */
 
     "image/jpeg",
 
     "image/png"
+
+];
+
+/*
+=====================================
+Allowed Extensions
+=====================================
+*/
+
+const allowedExtensions = [
+
+    ".pdf",
+
+    ".doc",
+
+    ".docx",
+
+    ".xls",
+
+    ".xlsx",
+
+    ".csv",
+
+    ".txt",
+
+    ".jpg",
+
+    ".jpeg",
+
+    ".png"
 
 ];
 
@@ -136,13 +196,25 @@ const fileFilter = (
 
 ) => {
 
+    const extension = path
+
+        .extname(file.originalname)
+
+        .toLowerCase();
+
+    console.log("\n========== MULTER ==========");
+    console.log("Original File :", file.originalname);
+    console.log("MIME Type     :", file.mimetype);
+    console.log("Extension     :", extension);
+    console.log("============================\n");
+
     if (
 
-        allowedMimeTypes.includes(
+        allowedMimeTypes.includes(file.mimetype)
 
-            file.mimetype
+        ||
 
-        )
+        allowedExtensions.includes(extension)
 
     ) {
 
@@ -162,7 +234,7 @@ const fileFilter = (
 
             new Error(
 
-                "Unsupported file type."
+                `Unsupported file type. MIME=${file.mimetype}, EXT=${extension}`
 
             ),
 

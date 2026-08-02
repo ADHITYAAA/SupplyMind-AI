@@ -15,7 +15,62 @@ class ParserFactory {
     =====================================
     */
 
-    static getParser(mimeType) {
+    static getParser(mimeType, fileExtension = "") {
+
+        const extension = (fileExtension || "").toLowerCase();
+
+        console.log("\n========== PARSER FACTORY ==========");
+        console.log("MIME TYPE :", mimeType);
+        console.log("EXTENSION :", extension);
+        console.log("====================================\n");
+
+        /*
+        =====================================
+        Detect By File Extension First
+        =====================================
+        */
+
+        switch (extension) {
+
+            case ".pdf":
+
+                return PDFParser;
+
+            case ".doc":
+
+            case ".docx":
+
+                return WordParser;
+
+            case ".xls":
+
+            case ".xlsx":
+
+                return ExcelParser;
+
+            case ".csv":
+
+                return CSVParser;
+
+            case ".txt":
+
+                return TextParser;
+
+            case ".jpg":
+
+            case ".jpeg":
+
+            case ".png":
+
+                return ImageParser;
+
+        }
+
+        /*
+        =====================================
+        Fallback Using MIME Type
+        =====================================
+        */
 
         switch (mimeType) {
 
@@ -37,6 +92,10 @@ class ParserFactory {
 
             case MIME_TYPES.CSV:
 
+            case MIME_TYPES.CSV_ALT:
+
+            case MIME_TYPES.CSV_EXCEL:
+
                 return CSVParser;
 
             case MIME_TYPES.TXT:
@@ -51,15 +110,84 @@ class ParserFactory {
 
                 return ImageParser;
 
-            default:
+            case MIME_TYPES.OCTET_STREAM:
 
-                throw new Error(
+                /*
+                =====================================
+                Unknown MIME
 
-                    `Unsupported file type: ${mimeType}`
+                Decide Using Extension
+                =====================================
+                */
 
-                );
+                if (extension === ".csv") {
+
+                    return CSVParser;
+
+                }
+
+                if (extension === ".txt") {
+
+                    return TextParser;
+
+                }
+
+                if (extension === ".pdf") {
+
+                    return PDFParser;
+
+                }
+
+                if (
+
+                    extension === ".doc" ||
+
+                    extension === ".docx"
+
+                ) {
+
+                    return WordParser;
+
+                }
+
+                if (
+
+                    extension === ".xls" ||
+
+                    extension === ".xlsx"
+
+                ) {
+
+                    return ExcelParser;
+
+                }
+
+                if (
+
+                    extension === ".jpg" ||
+
+                    extension === ".jpeg" ||
+
+                    extension === ".png"
+
+                ) {
+
+                    return ImageParser;
+
+                }
+
+                break;
 
         }
+
+        console.log("UNKNOWN MIME :", mimeType);
+        console.log("UNKNOWN EXT  :", extension);
+
+        throw new Error(
+
+            `Unsupported file type. MIME=${mimeType}, EXT=${extension}`
+
+        );
 
     }
 

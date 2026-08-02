@@ -18,19 +18,25 @@ export const MIME_TYPES = {
 
     CSV: "text/csv",
 
+    CSV_ALT: "application/csv",
+
+    CSV_EXCEL: "application/vnd.ms-excel",
+
     TXT: "text/plain",
 
     PNG: "image/png",
 
     JPG: "image/jpeg",
 
-    JPEG: "image/jpeg"
+    JPEG: "image/jpeg",
+
+    OCTET_STREAM: "application/octet-stream"
 
 };
 
 /*
 =====================================
-Supported Parsers
+Supported Parser Types
 =====================================
 */
 
