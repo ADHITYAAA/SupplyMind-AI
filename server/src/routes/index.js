@@ -13,6 +13,7 @@ import zoneRoutes from "../modules/warehouse-zones/zone.routes.js";
 import rackRoutes from "../modules/warehouse-racks/rack.routes.js";
 import shelfRoutes from "../modules/warehouse-shelves/shelf.routes.js";
 import binRoutes from "../modules/warehouse-bins/bin.routes.js";
+import invoiceRoutes from "../modules/invoices/invoice.routes.js";
 
 const router = express.Router();
 
@@ -68,5 +69,7 @@ router.use("/warehouse-racks", rackRoutes);
 router.use("/warehouse-shelves", shelfRoutes);
 
 router.use("/warehouse-bins", binRoutes);
+
+router.use("/invoices", invoiceRoutes);
 
 export default router;
