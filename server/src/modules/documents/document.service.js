@@ -1,6 +1,7 @@
 import path from "path";
 
 import documentRepository from "./document.repository.js";
+import documentProcessingService from "../document-processing/document-processing.service.js";
 
 import ApiError from "../../common/errors/ApiError.js";
 import { HTTP_STATUS } from "../../common/constants/index.js";
@@ -29,7 +30,7 @@ class DocumentService {
 
         /*
         =====================================
-        Build Document Record
+        Create Document Record
         =====================================
         */
 
@@ -59,9 +60,97 @@ class DocumentService {
 
         };
 
-        return await documentRepository.create(
+        const document =
 
-            documentData
+            await documentRepository.create(
+
+                documentData
+
+            );
+
+        /*
+        =====================================
+        Start Processing
+        =====================================
+        */
+
+        await documentRepository.update(
+
+            document._id,
+
+            {
+
+                uploadStatus: "Processing"
+
+            }
+
+        );
+
+        /*
+        =====================================
+        Parse Uploaded Document
+        =====================================
+        */
+
+        const processingResult =
+
+            await documentProcessingService.processDocument(
+
+                document
+
+            );
+
+        /*
+        =====================================
+        Save Processing Result
+        =====================================
+        */
+
+        if (processingResult.success) {
+
+            return await documentRepository.update(
+
+                document._id,
+
+                {
+
+                    uploadStatus: "Processed",
+
+                    extractedText:
+
+                        processingResult.extractedText,
+
+                    parserUsed:
+
+                        processingResult.parser,
+
+                    processingMetadata:
+
+                        processingResult.metadata,
+
+                    isParsed: true
+
+                }
+
+            );
+
+        }
+
+        /*
+        =====================================
+        Processing Failed
+        =====================================
+        */
+
+        return await documentRepository.update(
+
+            document._id,
+
+            {
+
+                uploadStatus: "Failed"
+
+            }
 
         );
 
@@ -107,17 +196,13 @@ class DocumentService {
 
     async findAllDocuments(query) {
 
-        const page = Number(
+        const page =
 
-            query.page
+            Number(query.page) || 1;
 
-        ) || 1;
+        const limit =
 
-        const limit = Number(
-
-            query.limit
-
-        ) || 10;
+            Number(query.limit) || 10;
 
         const filters = {
 

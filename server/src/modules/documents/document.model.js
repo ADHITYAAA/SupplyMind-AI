@@ -124,6 +124,36 @@ const documentSchema = new mongoose.Schema(
 
         /*
         =====================================
+        AI Processing Result
+        =====================================
+        */
+
+        extractedText: {
+
+            type: String,
+
+            default: ""
+
+        },
+
+        parserUsed: {
+
+            type: String,
+
+            default: null
+
+        },
+
+        processingMetadata: {
+
+            type: mongoose.Schema.Types.Mixed,
+
+            default: {}
+
+        },
+
+        /*
+        =====================================
         AI Processing Flags
         =====================================
         */
