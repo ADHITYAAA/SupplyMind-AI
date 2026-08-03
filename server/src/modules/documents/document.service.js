@@ -3,6 +3,7 @@ import path from "path";
 import documentRepository from "./document.repository.js";
 import documentProcessingService from "../document-processing/document-processing.service.js";
 import entityExtractionService from "../intelligence/entity-extraction/entity-extraction.service.js";
+import graphBuilder from "../graph/graph.builder.js";
 
 import ApiError from "../../common/errors/ApiError.js";
 import { HTTP_STATUS } from "../../common/constants/index.js";
@@ -126,6 +127,45 @@ class DocumentService {
                     processingResult.extractedText
 
                 );
+
+            /*
+            =====================================
+            Debug Graph Builder
+            =====================================
+            */
+
+            console.log("\n====================================");
+            console.log("DOCUMENT SERVICE");
+            console.log("Calling Graph Builder...");
+            console.log("Document Type :", document.documentType);
+            console.log("Entities :", extractedEntities);
+            console.log("====================================\n");
+
+            try {
+
+                await graphBuilder.build(
+
+                    document.documentType,
+
+                    extractedEntities
+
+                );
+
+                console.log("\n====================================");
+                console.log("GRAPH BUILDER COMPLETED");
+                console.log("====================================\n");
+
+            }
+
+            catch (error) {
+
+                console.log("\n====================================");
+                console.log("GRAPH BUILDER FAILED");
+                console.log("====================================");
+                console.error(error);
+                console.log("====================================\n");
+
+            }
 
         }
 

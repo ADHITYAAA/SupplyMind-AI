@@ -31,12 +31,15 @@ class InvoiceExtractor {
         /*
         =====================================
         Invoice Number
+        Supports:
+        Invoice Number:
+        Invoice Number
         =====================================
         */
 
         entities.invoiceNumber = RegexUtils.find(
 
-            /Invoice\s+Number\s*:\s*([A-Z0-9\-\/]+)/i,
+            /Invoice\s+Number\s*:?\s*([A-Z0-9\-\/]+)/i,
 
             text
 
@@ -45,12 +48,15 @@ class InvoiceExtractor {
         /*
         =====================================
         Supplier Name
+        Supports:
+        Supplier:
+        Supplier
         =====================================
         */
 
         entities.supplierName = RegexUtils.find(
 
-            /Supplier\s*:\s*(.*?)\s+Invoice\s+Date/i,
+            /Supplier\s*:?\s*(.*?)\s+(?:Warehouse|Invoice\s*Date|Purchase\s*Order|Shipment|Total)/i,
 
             text
 
@@ -59,12 +65,16 @@ class InvoiceExtractor {
         /*
         =====================================
         Purchase Order
+        Supports:
+        PO Number
+        Purchase Order
+        Purchase Order Number
         =====================================
         */
 
         entities.purchaseOrder = RegexUtils.find(
 
-            /PO\s*Number\s*:\s*([A-Z0-9\-\/]+)/i,
+            /(?:PO\s*Number|Purchase\s*Order(?:\s*Number)?)\s*:?\s*([A-Z0-9\-\/]+)/i,
 
             text
 
@@ -78,7 +88,7 @@ class InvoiceExtractor {
 
         entities.invoiceDate = RegexUtils.find(
 
-            /Invoice\s*Date\s*:\s*([0-9]{2}-[A-Za-z]{3}-[0-9]{4})/i,
+            /Invoice\s*Date\s*:?\s*([0-9]{2}-[A-Za-z]{3}-[0-9]{4})/i,
 
             text
 
@@ -92,7 +102,7 @@ class InvoiceExtractor {
 
         entities.dueDate = RegexUtils.find(
 
-            /Due\s*Date\s*:\s*([0-9]{2}-[A-Za-z]{3}-[0-9]{4})/i,
+            /Due\s*Date\s*:?\s*([0-9]{2}-[A-Za-z]{3}-[0-9]{4})/i,
 
             text
 
