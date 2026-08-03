@@ -1,6 +1,7 @@
 import supplierBuilder from "./builders/supplier.builder.js";
 import invoiceBuilder from "./builders/invoice.builder.js";
 import purchaseOrderBuilder from "./builders/purchase-order.builder.js";
+import productBuilder from "./builders/product.builder.js";
 
 class GraphBuilder {
 
@@ -24,6 +25,9 @@ class GraphBuilder {
 
                 console.log("Building Purchase Order...");
                 await purchaseOrderBuilder.build(entities);
+
+                console.log("Building Products...");
+                await productBuilder.build(entities);
 
                 break;
 

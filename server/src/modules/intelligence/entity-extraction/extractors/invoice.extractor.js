@@ -24,15 +24,14 @@ class InvoiceExtractor {
 
             dueDate: null,
 
-            totalAmount: null
+            totalAmount: null,
+
+            products: []
 
         };
 
         /*
         =====================================
-        Invoice Number
-        Supports:
-        Invoice Number:
         Invoice Number
         =====================================
         */
@@ -48,9 +47,6 @@ class InvoiceExtractor {
         /*
         =====================================
         Supplier Name
-        Supports:
-        Supplier:
-        Supplier
         =====================================
         */
 
@@ -65,10 +61,6 @@ class InvoiceExtractor {
         /*
         =====================================
         Purchase Order
-        Supports:
-        PO Number
-        Purchase Order
-        Purchase Order Number
         =====================================
         */
 
@@ -131,6 +123,48 @@ class InvoiceExtractor {
                 totals[totals.length - 1][1];
 
         }
+
+        /*
+        =====================================
+        Extract Products
+        =====================================
+        */
+
+        const productRegex =
+
+            /(PRD-\d+)\s+(.+?)\s+(\d+)\s+(\d+)/g;
+
+        let match;
+
+        while (
+
+            (match = productRegex.exec(text)) !== null
+
+        ) {
+
+            entities.products.push({
+
+                productId: match[1],
+
+                productName: match[2].trim(),
+
+                quantity: Number(match[3]),
+
+                unitPrice: Number(match[4])
+
+            });
+
+        }
+
+        /*
+        =====================================
+        Debug
+        =====================================
+        */
+
+        console.log("\n========== INVOICE ENTITIES ==========");
+        console.log(entities);
+        console.log("======================================\n");
 
         return entities;
 
