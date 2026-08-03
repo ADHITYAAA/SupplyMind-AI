@@ -20,6 +20,14 @@ class InvoiceExtractor {
 
             purchaseOrder: null,
 
+            warehouse: null,
+
+            rack: null,
+
+            shelf: null,
+
+            shipmentId: null,
+
             invoiceDate: null,
 
             dueDate: null,
@@ -52,7 +60,7 @@ class InvoiceExtractor {
 
         entities.supplierName = RegexUtils.find(
 
-            /Supplier\s*:?\s*(.*?)\s+(?:Warehouse|Invoice\s*Date|Purchase\s*Order|Shipment|Total)/i,
+            /Supplier\s*:?\s*(.*?)\s+(?:Warehouse|Rack|Shelf|Invoice\s*Date|Purchase\s*Order|Shipment|Total)/i,
 
             text
 
@@ -67,6 +75,62 @@ class InvoiceExtractor {
         entities.purchaseOrder = RegexUtils.find(
 
             /(?:PO\s*Number|Purchase\s*Order(?:\s*Number)?)\s*:?\s*([A-Z0-9\-\/]+)/i,
+
+            text
+
+        );
+
+        /*
+        =====================================
+        Warehouse
+        =====================================
+        */
+
+        entities.warehouse = RegexUtils.find(
+
+            /Warehouse\s*:?\s*(.*?)\s+Rack/i,
+
+            text
+
+        );
+
+        /*
+        =====================================
+        Rack
+        =====================================
+        */
+
+        entities.rack = RegexUtils.find(
+
+            /Rack\s*:?\s*(.*?)\s+Shelf/i,
+
+            text
+
+        );
+
+        /*
+        =====================================
+        Shelf
+        =====================================
+        */
+
+        entities.shelf = RegexUtils.find(
+
+            /Shelf\s*:?\s*(.*?)\s+Shipment/i,
+
+            text
+
+        );
+
+        /*
+        =====================================
+        Shipment ID
+        =====================================
+        */
+
+        entities.shipmentId = RegexUtils.find(
+
+            /Shipment\s*ID\s*:?\s*([A-Z0-9\-\/]+)/i,
 
             text
 
